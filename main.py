@@ -22,58 +22,25 @@ dp = Dispatcher()
 
 TOMBA_PROMPT = """Ты — злой, агрессивный персонаж Тумба Юмба. Общайся матом, коротко (до 15 слов). Ни в коем случае не используй словосочетание 'орешки макадамья'."""
 
-# СЛОВАРЬ ЛОКАЦИЙ ДЛЯ БЕГЕМОТА
 LOCAL_DICT = {
-    "в болоте": "in a muddy swamp",
-    "в реке": "in a deep river",
-    "в зоопарке": "in a zoo enclosure",
-    "на пляже": "on a sunny beach",
-    "на траве": "on green grass",
-    "на травке": "on green grass",
-    "на поляне": "in a forest clearing",
-    "в космосе": "in deep space",
-    "в машине": "inside a car",
-    "в горах": "in the mountains",
-    "в снегу": "in the snow",
-    "в аду": "in hell with fire",
-    "в офисе": "in a corporate office",
-    "на луне": "on the moon",
-    "в подвале": "in a dark basement",
-    "на крыше": "on a rooftop",
-    "в стиральной машине": "inside a washing machine",
-    "на совещании": "at a business meeting wearing a suit",
-    "в матрице": "inside the Matrix, green neon code",
-    "на танке": "riding a military tank",
-    "в туалете": "sitting on a toilet",
-    "бегемот чистит картошку": "a hippopotamus peeling potatoes",
-    "золотая картошка": "a giant golden potato",
-    "орешки макадамья": "macadamia nuts",
-    "в школе": "in a school classroom",
-    "на диване": "on a cozy sofa",
-    "в библиотеке": "in a grand library",
-    "в баре": "in a dark pub",
-    "на катке": "on an ice rink",
-    "в самолете": "inside an airplane",
-    "на корабле": "on a pirate ship",
-    "в деревне": "in a rural village",
-    "на балконе": "on a balcony",
-    "в подъезде": "in a dirty stairwell",
-    "на крыше небоскреба": "on a skyscraper roof",
-    "в пустыне": "in a sandy desert",
-    "в джунглях": "in a dense jungle",
-    "под водой": "underwater in the ocean",
-    "на вулкане": "on a volcano",
-    "в магазине": "in a grocery store",
-    "в спортзале": "in a gym",
-    "на рок-концерте": "at a rock concert",
-    "в кинотеатре": "in a cinema",
-    "на кладбище": "in a creepy graveyard",
-    "в пивной": "in a beer hall",
-    "на кухне": "in a messy kitchen",
-    "в спальне": "in a bedroom",
-    "на заводе": "in a factory",
-    "на стройке": "on a construction site",
-    "на ферме": "on a farm",
+    "в болоте": "in a muddy swamp", "в реке": "in a deep river", "в зоопарке": "in a zoo enclosure",
+    "на пляже": "on a sunny beach", "на траве": "on green grass", "на травке": "on green grass",
+    "на поляне": "in a forest clearing", "в космосе": "in deep space", "в машине": "inside a car",
+    "в горах": "in the mountains", "в снегу": "in the snow", "в аду": "in hell with fire",
+    "в офисе": "in a corporate office", "на луне": "on the moon", "в подвале": "in a dark basement",
+    "на крыше": "on a rooftop", "в стиральной машине": "inside a washing machine",
+    "на совещании": "at a business meeting wearing a suit", "в матрице": "inside the Matrix, green neon code",
+    "на танке": "riding a military tank", "в туалете": "sitting on a toilet",
+    "бегемот чистит картошку": "a hippopotamus peeling potatoes", "золотая картошка": "a giant golden potato",
+    "орешки макадамья": "macadamia nuts", "в школе": "in a school classroom", "на диване": "on a cozy sofa",
+    "в библиотеке": "in a grand library", "в баре": "in a dark pub", "на катке": "on an ice rink",
+    "в самолете": "inside an airplane", "на корабле": "on a pirate ship", "в деревне": "in a rural village",
+    "на балконе": "on a balcony", "в подъезде": "in a dirty stairwell", "на крыше небоскреба": "on a skyscraper roof",
+    "в пустыне": "in a sandy desert", "в джунглях": "in a dense jungle", "под водой": "underwater in the ocean",
+    "на вулкане": "on a volcano", "в магазине": "in a grocery store", "в спортзале": "in a gym",
+    "на рок-концерте": "at a rock concert", "в кинотеатре": "in a cinema", "на кладбище": "in a creepy graveyard",
+    "в пивной": "in a beer hall", "на кухне": "in a messy kitchen", "в спальне": "in a bedroom",
+    "на заводе": "in a factory", "на стройке": "on a construction site", "на ферме": "on a farm",
     "в аэропорту": "in an airport terminal"
 }
 
@@ -155,7 +122,6 @@ async def proceed_generation(message: Message, prompt_text: str, state: FSMConte
         english_prompt = await translate_text(prompt_text)
         await msg.edit_text(f"⏳ Ща нарисую: {english_prompt}...")
     
-    # ТУТ МЕНЯЕМ HORSE НА HIPPOPOTAMUS
     full_prompt = f"A high quality photo of a hippopotamus, {english_prompt}, vibrant colors, realistic, 8k, detailed"
     await generate_and_send(message, full_prompt, msg, prompt_text, state)
 
@@ -183,6 +149,7 @@ async def translate_text(text: str) -> str:
 async def fetch_image_from_apis(prompt: str):
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
 
+    # 1. Pollinations (обычный)
     try:
         url = f"https://image.pollinations.ai/prompt/{prompt}?width=1024&height=1024&nologo=true&model=flux&seed={random.randint(1, 999999)}"
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as session:
@@ -190,6 +157,7 @@ async def fetch_image_from_apis(prompt: str):
                 if resp.status == 200: return await resp.read()
     except Exception: pass
 
+    # 2. Airforce
     try:
         url = f"https://api.airforce/imagine?prompt={urllib.parse.quote(prompt)}"
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as session:
@@ -197,6 +165,15 @@ async def fetch_image_from_apis(prompt: str):
                 if resp.status == 200: return await resp.read()
     except Exception: pass
 
+    # 3. Pollinations (другая модель)
+    try:
+        url = f"https://image.pollinations.ai/prompt/{prompt}?width=1024&height=1024&nologo=true&model=turbo&seed={random.randint(1, 999999)}"
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as session:
+            async with session.get(url, headers=headers) as resp:
+                if resp.status == 200: return await resp.read()
+    except Exception: pass
+
+    # 4. Hugging Face
     try:
         api_url = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0"
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=15)) as session:
@@ -210,13 +187,35 @@ async def generate_and_send(message: Message, full_prompt: str, status_msg: Mess
     image_bytes = await fetch_image_from_apis(full_prompt)
 
     if not image_bytes:
-        retry_time = datetime.now() + timedelta(seconds=10)
-        await state.update_data(retry_at=retry_time.timestamp())
+        # ЕСЛИ ВСЕ СДОХЛИ - РИСУЕМ ЧЕРНЫЙ КВАДРАТ
+        img = Image.new('RGB', (1024, 1024), color = 'black')
+        draw = ImageDraw.Draw(img)
+        try:
+            font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 80)
+        except:
+            font = ImageFont.load_default()
         
+        caption = "НЕЙРОНКА СДОХЛА"
+        bbox = draw.textbbox((0, 0), caption, font=font)
+        x = (img.width - (bbox[2] - bbox[0])) / 2
+        y = (img.height - (bbox[3] - bbox[1])) / 2
+        
+        draw.text((x, y), caption, font=font, fill="red")
+        
+        output = io.BytesIO()
+        img.save(output, format="JPEG", quality=90)
+        output.seek(0)
+        
+        photo = BufferedInputFile(output.read(), filename="horse_meme.jpg")
         builder = InlineKeyboardBuilder()
-        builder.button(text="🔄 Попробовать снова (10с)", callback_data="retry_gen")
-        await status_msg.edit_text("❌ Все сервера с картинками сдохли. Попробуй через 10 секунд.", reply_markup=builder.as_markup())
-        asyncio.create_task(update_timer(status_msg.message_id, message.chat.id))
+        builder.button(text="🎲 Сгенерить ещё", callback_data="make_meme")
+        
+        await message.answer_photo(photo, caption="Нейросети реально легли. Вот тебе заглушка.", reply_markup=builder.as_markup())
+        await status_msg.delete()
+        
+        # Ставим таймер на 15 секунд
+        retry_time = datetime.now() + timedelta(seconds=15)
+        await state.update_data(retry_at=retry_time.timestamp())
         return
 
     try:
@@ -260,7 +259,7 @@ async def generate_and_send(message: Message, full_prompt: str, status_msg: Mess
         await status_msg.edit_text(f"❌ Ошибка обработки: {e}")
 
 async def update_timer(message_id: int, chat_id: int):
-    for seconds_left in range(9, 0, -1):
+    for seconds_left in range(14, 0, -1): # Теперь 15 секунд
         await asyncio.sleep(1)
         builder = InlineKeyboardBuilder()
         builder.button(text=f"🔄 Попробовать снова ({seconds_left}с)", callback_data="retry_gen")
